@@ -1,10 +1,10 @@
-#ON DEVELOPMENT
+# ON DEVELOPMENT
 
-#About
+# About
 
 Desktop application to listen file's changes like modifications, deletions, etc.
 
-##Made with
+## Made with
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
