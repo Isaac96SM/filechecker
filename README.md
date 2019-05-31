@@ -1,6 +1,6 @@
 # ON DEVELOPMENT
 
-# About
+## About
 
 Desktop application to listen file's changes like modifications, deletions, etc.
 
