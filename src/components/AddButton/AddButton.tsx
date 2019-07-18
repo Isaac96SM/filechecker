@@ -23,39 +23,49 @@ class AddButton extends React.PureComponent<IProps, IState> {
     }
 
     showDialog() {
-        const path = modules.dialog.showOpenDialog({
+        const paths = modules.dialog.showOpenDialog({
             title: "Select folder",
             properties: ['openDirectory']
-        })[0];
+        });
 
-        if (!path)
+        if (paths.length === 0)
             return false;
 
-        console.log(this.props.existingPaths, path);
+        const duplicated: Array<string> = paths.filter((p: string) => this.props.existingPaths.includes(p));;
+    
+        if (duplicated.length === 1)
+            modules.dialog.showErrorBox("Error", `This folder: ${duplicated[0]} is already watching`);
+        else if (duplicated.length > 0)
+            modules.dialog.showErrorBox("Error", `This folders: ${duplicated.join(', ')} are already watching`);
+        else if (duplicated.length !== paths.length) {
+            const newPaths: Array<string> = paths.filter((p: string) => !this.props.existingPaths.includes(p));
 
-        if (this.props.existingPaths.includes(path))
-            modules.dialog.showErrorBos("Error", "This folder is already watching");
+            if (newPaths.length > 0)
+                this.add(newPaths);
+        }
+        
+        return false;
+    }
 
+    add(paths: Array<string>) {
         this.setState({
             loading: true
         }, () => {
-            modules.fs.readdir(path, (err: Error, files: Array<string>) => {
+            modules.fs.readdir(paths[0], (err: Error, files: Array<string>) => {
                 const rows: Array<IRow> = [];
 
                 files.forEach(file => {
                     const row: IRow = {
                         fileName: file,
-                        path: path
+                        path: paths[0]
                     };
 
                     rows.push(row);
                 });
 
-                this.props.gridApi.setRowData(rows)
-
                 this.setState({
                     loading: false
-                });
+                }, () => this.props.confirm(rows));
             });
         });
     }

@@ -7,6 +7,9 @@ import 'ag-grid-community/dist/styles/ag-theme-material.css';
 
 import IState from './IState';
 import IProps from './IProps';
+import IRow from '../../interfaces/IRow';
+
+import RowHelper from '../../helpers/RowHelper';
 
 import AddButton from '../AddButton/AddButton';
 
@@ -27,17 +30,24 @@ class Grid extends React.PureComponent<IProps, IState> {
                 }
             ],
             rowData: [],
-            loaded: false
+            ready: false
         };
 
         this.onGridReady = this.onGridReady.bind(this);
+        this.addRows = this.addRows.bind(this);
     }
 
     onGridReady(params:any) {
         this.Grid = params;
         
         this.setState({
-            loaded: true
+            ready: true
+        });
+    }
+
+    addRows(rows: Array<IRow>) {
+        this.setState({
+            rowData: RowHelper.concatenate(this.state.rowData, rows)
         });
     }
 
@@ -46,9 +56,9 @@ class Grid extends React.PureComponent<IProps, IState> {
 
         let button = null;
 
-        if (this.state.loaded) {
+        if (this.state.ready) {
             button = (
-                <AddButton gridApi={this.Grid.api} existingPaths={existingPaths} />
+                <AddButton confirm={this.addRows} existingPaths={existingPaths} />
             );
         }
 
